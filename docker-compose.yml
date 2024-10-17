@@ -1,12 +1,7 @@
-volumes:
-  db-data:
-
 services:
   web:
     build: .
-    command: >
-      bash -c "rm -f tmp/pids/server.pid &&
-               bundle exec rails server -b '0.0.0.0'"
+    platform: linux/amd64
     env_file:
       - .env
     ports:
@@ -14,15 +9,14 @@ services:
     environment:
       - 'DATABASE_PASSWORD=${MYAPP_DATABASE_PASSWORD}'
     volumes:
-      - .:/myapp
+      - .:/rails-docker
     tty: true
     stdin_open: true
     depends_on:
       - db
-    links:
-      - db
   db:
     image: postgres:12
+    platform: linux/amd64
     volumes:
       - 'db-data:/var/lib/postgresql/data'
     env_file:
@@ -30,3 +24,5 @@ services:
     environment:
       - 'POSTGRES_USER=${MYAPP_DATABASE_PASSWORD}'
       - 'POSTGRES_PASSWORD=${MYAPP_DATABASE_PASSWORD}'
+volumes:
+  db-data:
